@@ -6,28 +6,17 @@ import pandas as pd
 
 
 def _safe_read_csv(csv_path: Path, usecols: list[str] | None) -> pd.DataFrame:
-    """Read a CSV while tolerating missing optional columns in usecols.
-
-    Pandas raises if usecols contains columns that are not present. For heterogeneous
-    CERT logs (especially email/http variants), we intersect usecols with the file's
-    header. We still enforce that a user column exists and that at least one
-    datetime column (date or timestamp) exists.
-    """
     if usecols is None:
-        df = pd.read_csv(csv_path)
+        df = pd.read_csv(csv_path, on_bad_lines='skip')
     else:
         header_cols = set(pd.read_csv(csv_path, nrows=0).columns)
         wanted = [c for c in usecols if c in header_cols]
 
-        # Enforce minimum required columns
         if "user" not in header_cols:
-            raise ValueError(f"'user' column not found in {csv_path.name}. Columns: {sorted(header_cols)}")
+            raise ValueError(f"'user' column not found in {csv_path.name}.")
         if ("date" not in header_cols) and ("timestamp" not in header_cols):
-            raise ValueError(
-                f"No datetime column ('date' or 'timestamp') found in {csv_path.name}. Columns: {sorted(header_cols)}"
-            )
+            raise ValueError(f"No datetime column found in {csv_path.name}.")
 
-        # Ensure we include the required columns even if the caller forgot them
         if "user" not in wanted:
             wanted.append("user")
         if "date" in header_cols and "date" not in wanted:
@@ -35,7 +24,7 @@ def _safe_read_csv(csv_path: Path, usecols: list[str] | None) -> pd.DataFrame:
         if "timestamp" in header_cols and "timestamp" not in wanted:
             wanted.append("timestamp")
 
-        df = pd.read_csv(csv_path, usecols=wanted)
+        df = pd.read_csv(csv_path, usecols=wanted, on_bad_lines='skip')
 
     return df
 
@@ -59,7 +48,7 @@ def _parse_datetime(df: pd.DataFrame) -> pd.DataFrame:
     else:
         raise ValueError(f"No datetime column found. Columns: {list(df.columns)}")
 
-    df["timestamp"] = pd.to_datetime(df[dt_col], errors="coerce")
+    df["timestamp"] = pd.to_datetime(df[dt_col], errors="coerce", infer_datetime_format=True, cache=True)
     df = df.dropna(subset=["timestamp"])
     df["day"] = df["timestamp"].dt.date
     df["hour"] = df["timestamp"].dt.hour
@@ -104,7 +93,8 @@ def load_log(csv_path: Path, event_type: str, cfg: PipelineConfig, usecols: list
     df["event_type"] = event_type
     # Derive a human-readable action field when an activity column exists
     if "activity" in df.columns:
-        df["action"] = df["activity"].astype(str).str.strip().replace({"nan": None})
+        df["action"] = df["activity"].astype(str).str.strip()
+        df["action"] = df["action"].where(df["action"] != "nan", None)
     else:
         df["action"] = None
 
