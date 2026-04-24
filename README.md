@@ -1,7 +1,15 @@
 # Data-Driven Insider Threat Detection Using Machine Learning
 
-**Final Year Project — BSc Computer Science (Software Engineering)**  
+**Final Year Project — BSc Computer Science (Software Engineering)**
 **Mercedes Anegbeh · Goldsmiths, University of London · 2026**
+
+## Data Access
+
+The CERT dataset files required to run this project are available via OneDrive:
+
+🔗[data](https://goldsmithscollege-my.sharepoint.com/:f:/g/personal/maneg001_campus_goldsmiths_ac_uk/IgDqER0CdSTISrmJrPBjQHNJAafawl7vdpzPCiefOnm0b4Q?e=VQAdtx)
+
+Download all files and place them in `data/raw/` before running the pipeline.
 
 ---
 
@@ -52,11 +60,11 @@ project/
 
 Python 3.9 or higher is required.
 
-| Package | Version | Purpose |
-|---|---|---|
-| pandas | ≥ 1.5 | Data loading, aggregation, merging |
-| numpy | ≥ 1.23 | Numerical operations, z-score computation |
-| scikit-learn | ≥ 1.1 | Isolation Forest, StandardScaler, evaluation metrics |
+| Package      | Version | Purpose                                              |
+| ------------ | ------- | ---------------------------------------------------- |
+| pandas       | ≥ 1.5  | Data loading, aggregation, merging                   |
+| numpy        | ≥ 1.23 | Numerical operations, z-score computation            |
+| scikit-learn | ≥ 1.1  | Isolation Forest, StandardScaler, evaluation metrics |
 
 Install all dependencies with:
 
@@ -174,6 +182,7 @@ Prints risk distribution, top anomalous users, and (if `insiders.csv` is present
 ## Demo Mode
 
 By default, the pipeline runs in **demo mode**, which filters to:
+
 - Date range: **January–February 2010**
 - User sample: **first 100 users alphabetically**
 
@@ -255,22 +264,22 @@ Low: 5601   (84.59%)
 
 Key parameters in `PipelineConfig` (`pipeline_load.py`):
 
-| Parameter | Default | Description |
-|---|---|---|
-| `demo_mode` | `True` | Filter to date range and user sample |
-| `date_start` | `2010-01-01` | Start date for demo window |
-| `date_end` | `2010-02-28` | End date for demo window |
-| `user_sample_size` | `100` | Number of users to include in demo mode |
-| `after_hours_start` | `18` | Hour (24h) after which activity is flagged |
-| `after_hours_end` | `8` | Hour (24h) before which activity is flagged |
+| Parameter             | Default        | Description                                 |
+| --------------------- | -------------- | ------------------------------------------- |
+| `demo_mode`         | `True`       | Filter to date range and user sample        |
+| `date_start`        | `2010-01-01` | Start date for demo window                  |
+| `date_end`          | `2010-02-28` | End date for demo window                    |
+| `user_sample_size`  | `100`        | Number of users to include in demo mode     |
+| `after_hours_start` | `18`         | Hour (24h) after which activity is flagged  |
+| `after_hours_end`   | `8`          | Hour (24h) before which activity is flagged |
 
 Key parameters in `model_iforest.py`:
 
-| Parameter | Default | Description |
-|---|---|---|
+| Parameter         | Default  | Description                                   |
+| ----------------- | -------- | --------------------------------------------- |
 | `contamination` | `0.05` | Expected proportion of anomalous observations |
-| `n_estimators` | `200` | Number of isolation trees |
-| `random_state` | `42` | Seed for reproducibility |
+| `n_estimators`  | `200`  | Number of isolation trees                     |
+| `random_state`  | `42`   | Seed for reproducibility                      |
 
 ---
 
@@ -282,6 +291,6 @@ Key parameters in `model_iforest.py`:
 
 ## Author
 
-**Mercedes Anegbeh**  
-GitHub: [github.com/mAnegbeh](https://github.com/mAnegbeh)  
+**Mercedes Anegbeh**
+GitHub: [github.com/mAnegbeh](https://github.com/mAnegbeh)
 LinkedIn: [linkedin.com/in/mercedes-anegbeh](https://linkedin.com/in/mercedes-anegbeh)
